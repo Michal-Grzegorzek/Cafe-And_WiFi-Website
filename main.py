@@ -1,0 +1,123 @@
+import werkzeug
+from functools import wraps
+from flask import g, request, redirect, url_for
+from flask import Flask, render_template, redirect, url_for, flash, request, abort
+from flask_bootstrap import Bootstrap
+from flask_ckeditor import CKEditor
+from datetime import date
+from werkzeug.security import generate_password_hash, check_password_hash
+from flask_sqlalchemy import SQLAlchemy
+from sqlalchemy.orm import relationship
+from flask_login import UserMixin, login_user, LoginManager, login_required, current_user, logout_user
+from flask_gravatar import Gravatar
+import os
+from forms import Cafe
+
+
+app = Flask(__name__)
+app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY')
+ckeditor = CKEditor(app)
+Bootstrap(app)
+
+# login_manager = LoginManager()
+# login_manager.init_app(app)
+
+
+##CONNECT TO DB
+app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get("DATABASE_URL",  "sqlite:///blog.db")
+# app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+db = SQLAlchemy(app)
+
+
+##CONFIGURE TABLES
+
+class BlogPost(db.Model):
+    __tablename__ = "blog_posts"
+    id = db.Column(db.Integer, primary_key=True)
+
+    author_id = db.Column(db.Integer, db.ForeignKey('users.id'))
+    title = db.Column(db.String(250), unique=True, nullable=False)
+    subtitle = db.Column(db.String(250), nullable=False)
+    date = db.Column(db.String(250), nullable=False)
+    body = db.Column(db.Text, nullable=False)
+    img_url = db.Column(db.String(250), nullable=False)
+
+
+
+
+# class AllCafes(db.Model):
+#     __tablename__ = "all_cafes"
+#     id = db.Column(db.Integer, primary_key=True)
+
+    # author_id = db.Column(db.Integer, db.ForeignKey('users.id'))
+    # author = relationship("User", back_populates="posts")
+
+
+    # name = db.Column(db.String(250), unique=True, nullable=True)
+    # map_url = db.Column(db.String(500), nullable=True)
+    # img_url = db.Column(db.String(500), nullable=True)
+    # location = db.Column(db.String(250), nullable=True)
+    # seats = db.Column(db.String(250), nullable=True)
+    # has_toilet = db.Column(db.Boolean, nullable=True)
+    # has_wifi = db.Column(db.Boolean, nullable=True)
+    # has_sockets = db.Column(db.Boolean, nullable=True)
+    # can_take_calls = db.Column(db.Boolean, nullable=True)
+    # coffee_price = db.Column(db.String(250), nullable=True)
+
+
+    # title = db.Column(db.String(250), unique=True, nullable=False)
+    # subtitle = db.Column(db.String(250), nullable=False)
+    # date = db.Column(db.String(250), nullable=False)
+    # body = db.Column(db.Text, nullable=False)
+    # img_url = db.Column(db.String(250), nullable=False)
+    # comments = relationship("Comment", back_populates="parent_post")
+
+
+db.create_all()
+
+@app.route('/')
+def get_all_posts():
+    return render_template("index.html")
+
+
+@app.route("/add-cafe", methods=["POST", "GET"])
+def add_new_cafe():
+    form = Cafe()
+    print("1")
+    if form.validate_on_submit():
+        print("3")
+        new_post = BlogPost(
+            title=form.title.data,
+            subtitle=form.subtitle.data,
+            body=form.body.data,
+            img_url=form.img_url.data,
+            author=current_user,
+            date=date.today().strftime("%B %d, %Y")
+        )
+
+        db.session.add(new_post)
+        db.session.commit()
+        return redirect(url_for("get_all_posts"))
+    return render_template("add-cafe.html", form=form)
+
+
+
+
+
+
+
+
+# @app.route("/about")
+# def about():
+#     return render_template("about.html", logged_in=current_user.is_authenticated)
+#
+#
+# @app.route("/contact")
+# def contact():
+#     return render_template("contact.html", logged_in=current_user.is_authenticated)
+
+
+
+if __name__ == "__main__":
+    app.run(debug=True)
+
