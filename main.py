@@ -15,7 +15,9 @@ from forms import Cafe
 
 
 app = Flask(__name__)
-app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY')
+app.app_context().push()
+app.config['SECRET_KEY'] = 'any secret string'
+# app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY')
 ckeditor = CKEditor(app)
 Bootstrap(app)
 
@@ -24,56 +26,31 @@ Bootstrap(app)
 
 
 ##CONNECT TO DB
-app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get("DATABASE_URL",  "sqlite:///blog.db")
-# app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get("DATABASE_URL",  "sqlite:///cafes.db")
+app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db = SQLAlchemy(app)
 
 
 ##CONFIGURE TABLES
 
-class BlogPost(db.Model):
-    __tablename__ = "blog_posts"
+class AllCafes(db.Model):
+    __tablename__ = "all_cafes"
     id = db.Column(db.Integer, primary_key=True)
-
-    author_id = db.Column(db.Integer, db.ForeignKey('users.id'))
-    title = db.Column(db.String(250), unique=True, nullable=False)
-    subtitle = db.Column(db.String(250), nullable=False)
-    date = db.Column(db.String(250), nullable=False)
-    body = db.Column(db.Text, nullable=False)
-    img_url = db.Column(db.String(250), nullable=False)
-
-
-
-
-# class AllCafes(db.Model):
-#     __tablename__ = "all_cafes"
-#     id = db.Column(db.Integer, primary_key=True)
-
     # author_id = db.Column(db.Integer, db.ForeignKey('users.id'))
     # author = relationship("User", back_populates="posts")
+    name = db.Column(db.String(250), unique=True, nullable=True)
+    map_url = db.Column(db.String(500), nullable=True)
+    img_url = db.Column(db.String(500), nullable=True)
+    location = db.Column(db.String(250), nullable=True)
+    seats = db.Column(db.String(250), nullable=True)
+    has_toilet = db.Column(db.Boolean, nullable=True)
+    has_wifi = db.Column(db.Boolean, nullable=True)
+    has_sockets = db.Column(db.Boolean, nullable=True)
+    can_take_calls = db.Column(db.Boolean, nullable=True)
+    coffee_price = db.Column(db.String(250), nullable=True)
 
 
-    # name = db.Column(db.String(250), unique=True, nullable=True)
-    # map_url = db.Column(db.String(500), nullable=True)
-    # img_url = db.Column(db.String(500), nullable=True)
-    # location = db.Column(db.String(250), nullable=True)
-    # seats = db.Column(db.String(250), nullable=True)
-    # has_toilet = db.Column(db.Boolean, nullable=True)
-    # has_wifi = db.Column(db.Boolean, nullable=True)
-    # has_sockets = db.Column(db.Boolean, nullable=True)
-    # can_take_calls = db.Column(db.Boolean, nullable=True)
-    # coffee_price = db.Column(db.String(250), nullable=True)
-
-
-    # title = db.Column(db.String(250), unique=True, nullable=False)
-    # subtitle = db.Column(db.String(250), nullable=False)
-    # date = db.Column(db.String(250), nullable=False)
-    # body = db.Column(db.Text, nullable=False)
-    # img_url = db.Column(db.String(250), nullable=False)
-    # comments = relationship("Comment", back_populates="parent_post")
-
-
-db.create_all()
+# db.create_all()
 
 @app.route('/')
 def get_all_posts():
