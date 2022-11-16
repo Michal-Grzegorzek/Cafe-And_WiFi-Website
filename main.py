@@ -53,8 +53,9 @@ class AllCafes(db.Model):
 # db.create_all()
 
 @app.route('/')
-def get_all_posts():
-    return render_template("index.html")
+def home():
+    form = Cafe()
+    return render_template("index.html", form=form)
 
 
 @app.route("/add-cafe", methods=["POST", "GET"])
