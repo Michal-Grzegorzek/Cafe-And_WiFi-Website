@@ -4,7 +4,14 @@
 * Author: BootstrapMade.com
 * License: https://bootstrapmade.com/license/
 */
-
+.wpforms-form input[type=submit],
+.wpforms-form button[type=submit] {
+    background-color: #A0E4CB; /* Grey background */
+    border: 1px solid #ddd; /* Dark grey border */
+    color: #333; /* Black text color */
+    font-size: 1em; /* Size of text */
+    padding: 10px 15px; /* Distance between text and border */
+}
 /*--------------------------------------------------------------
 # General
 --------------------------------------------------------------*/

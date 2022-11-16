@@ -64,18 +64,23 @@ def add_new_cafe():
     print("1")
     if form.validate_on_submit():
         print("3")
-        new_post = BlogPost(
-            title=form.title.data,
-            subtitle=form.subtitle.data,
-            body=form.body.data,
+        new_cafe = AllCafes(
+            name=form.name.data,
+            map_url=form.map_url.data,
             img_url=form.img_url.data,
-            author=current_user,
-            date=date.today().strftime("%B %d, %Y")
+            location=form.location.data,
+            seats=form.seats.data,
+            has_toilet=form.has_toilet.data,
+            has_wifi=form.has_wifi.data,
+            has_sockets=form.has_sockets.data,
+            can_take_calls=form.can_take_calls.data,
+            coffee_price=form.coffee_price.data,
+            # date=date.today().strftime("%B %d, %Y")
         )
 
-        db.session.add(new_post)
+        db.session.add(new_cafe)
         db.session.commit()
-        return redirect(url_for("get_all_posts"))
+        return redirect(url_for("home"))
     return render_template("add-cafe.html", form=form)
 
 
