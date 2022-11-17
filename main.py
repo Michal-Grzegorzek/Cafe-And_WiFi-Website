@@ -54,8 +54,8 @@ class AllCafes(db.Model):
 
 @app.route('/')
 def home():
-    form = Cafe()
-    return render_template("index.html", form=form)
+    cafes = AllCafes.query.all()
+    return render_template("index.html", all_cafes=cafes)
 
 
 @app.route("/add-cafe", methods=["POST", "GET"])

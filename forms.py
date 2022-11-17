@@ -12,7 +12,7 @@ class Cafe(FlaskForm):
     img_url = StringField("Cafe Image URL", validators=[DataRequired(), URL()])
     location = StringField("Cafe Location", validators=[DataRequired()])
     coffee_price = FloatField("Cafe Price in €", validators=[DataRequired(), NumberRange(min=0)])
-    seats = IntegerField('How Many Seats?', validators=[DataRequired(), NumberRange(min=0, max=100)])
+    seats = IntegerField('How Many Seats?', validators=[DataRequired(), NumberRange(min=0)])
     has_toilet = BooleanField("Toilets Available?")
     has_wifi = BooleanField("WiFi Available?")
     has_sockets = BooleanField("Sockets Available?")

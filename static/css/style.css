@@ -12,6 +12,12 @@
     font-size: 1em; /* Size of text */
     padding: 10px 15px; /* Distance between text and border */
 }
+
+body {
+  overflow-x: hidden; /* Hide horizontal scrollbar */
+}
+
+}
 /*--------------------------------------------------------------
 # General
 --------------------------------------------------------------*/
