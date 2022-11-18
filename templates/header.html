@@ -78,8 +78,8 @@
 <!--    </div>-->
 <!--  </div>-->
 <!--</nav>-->
-  <nav id="navbar" class="navbar navbar-light fixed-top bg-light" >
-    <a class="navbar-brand" href="#">
+  <nav id="navbar" class="navbar navbar-light fixed-top " style="background-color: #E5D9B6" >
+    <a class="navbar-brand" href="{{url_for('home')}}">
       <img src="static/img/wifi.png" width="50" height="50" style="margin-right: 50px; margin-top: 0px; margin-bottom: 0px; padding-top: 0px" class="d-inline-block align-top" alt="">
       <h2>Coffee & WiFi</h2>
     </a>
@@ -97,7 +97,7 @@
       <li><a class="navbar-brand" href="{{url_for('add_new_cafe')}}"><img src="static/img/add.png" width="20" height="20"
                                                 class="d-inline-block align-top" alt="" style="margin:5px">Add New Cafe</a>
       </li>
-      <li><a class="navbar-brand" href="#"><img src="static/img/contact.png" width="20" height="20"
+      <li><a class="navbar-brand" href="{{url_for('contact')}}"><img src="static/img/contact.png" width="20" height="20"
                                                 class="d-inline-block align-top" alt="" style="margin:5px">Contact</a>
       </li>
     </ul>

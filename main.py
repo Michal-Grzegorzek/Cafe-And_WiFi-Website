@@ -58,6 +58,11 @@ def home():
     return render_template("index.html", all_cafes=cafes)
 
 
+@app.route('/contact')
+def contact():
+    return render_template("contact.html")
+
+
 @app.route("/add-cafe", methods=["POST", "GET"])
 def add_new_cafe():
     form = Cafe()

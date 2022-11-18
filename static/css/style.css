@@ -6,7 +6,7 @@
 */
 .wpforms-form input[type=submit],
 .wpforms-form button[type=submit] {
-    background-color: #A0E4CB; /* Grey background */
+    background-color: #D8D9CF; /* Grey background */
     border: 1px solid #ddd; /* Dark grey border */
     color: #333; /* Black text color */
     font-size: 1em; /* Size of text */
@@ -17,8 +17,20 @@ body {
   overflow-x: hidden; /* Hide horizontal scrollbar */
 }
 
+.copyright {
+     text-align: center;
+     margin-top: 20px;
+     margin-bottom: 30px;
+     font-size: 14px
+  }
+
+.fa-2x {
+    color: #3C4048;
 }
+
+
 /*--------------------------------------------------------------
+
 # General
 --------------------------------------------------------------*/
 /* Add a black background color to the top navigation */
