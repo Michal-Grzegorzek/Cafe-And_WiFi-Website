@@ -20,15 +20,15 @@ class Cafe(FlaskForm):
     submit = SubmitField("Add Cafe")
 
 
-    # id = db.Column(db.Integer, primary_key=True)
-    # name = db.Column(db.String(250), unique=True, nullable=True)
-    # map_url = db.Column(db.String(500), nullable=True)
-    # img_url = db.Column(db.String(500), nullable=True)
-    # location = db.Column(db.String(250), nullable=True)
-    # seats = db.Column(db.String(250), nullable=True)
-    # has_toilet = db.Column(db.Boolean, nullable=True)
-    # has_wifi = db.Column(db.Boolean, nullable=True)
-    # has_sockets = db.Column(db.Boolean, nullable=True)
-    # can_take_calls = db.Column(db.Boolean, nullable=True)
-    # coffee_price = db.Column(db.String(250), nullable=True)
+class RegisterForm(FlaskForm):
+    email = StringField("Email",  validators=[DataRequired()])
+    password = PasswordField('Password', validators=[DataRequired()])
+    name = StringField('Name', validators=[DataRequired()])
+    submit = SubmitField('Sign Me Up!')
+
+
+class LoginForm(FlaskForm):
+    email = StringField("Email",  validators=[DataRequired()])
+    password = PasswordField('Password', validators=[DataRequired()])
+    submit = SubmitField('Let Me In!')
 
