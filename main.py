@@ -76,9 +76,10 @@ class AllCafes(db.Model):
 # db.create_all()
 
 @app.route('/')
+@app.route('/home')
 def home():
     cafes = AllCafes.query.all()
-    return render_template("index.html", all_cafes=cafes, logged_in=current_user.is_authenticated)
+    return render_template("index.html", all_cafes=cafes, logged_in=current_user.is_authenticated, title="Home Page")
 
 
 @app.route('/contact')
