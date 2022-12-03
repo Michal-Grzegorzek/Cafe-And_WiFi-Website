@@ -84,7 +84,7 @@ def home():
 
 @app.route('/contact')
 def contact():
-    return render_template("contact.html", logged_in=current_user.is_authenticated)
+    return render_template("contact.html", logged_in=current_user.is_authenticated, title="Contact Page")
 
 
 @app.route('/register', methods=["POST", "GET"])
@@ -108,7 +108,7 @@ def register():
         login_user(new_user)
         return redirect(url_for("home"))
 
-    return render_template("register.html", form=form, logged_in=current_user.is_authenticated)
+    return render_template("register.html", form=form, logged_in=current_user.is_authenticated, title="Register Page")
 
 
 @app.route('/login', methods=["POST", "GET"])
@@ -130,7 +130,7 @@ def login():
             flash("Password incorrect, try again.")
             return redirect(url_for('login'))
 
-    return render_template("login.html", form=form, logged_in=current_user.is_authenticated)
+    return render_template("login.html", form=form, logged_in=current_user.is_authenticated, title="Login Page")
 
 
 @app.route('/logout')
@@ -165,7 +165,7 @@ def add_new_cafe():
         db.session.add(new_cafe)
         db.session.commit()
         return redirect(url_for("home"))
-    return render_template("add-cafe.html", form=form, logged_in=current_user.is_authenticated)
+    return render_template("add-cafe.html", form=form, logged_in=current_user.is_authenticated, title="Add Cafe")
 
 
 if __name__ == "__main__":
