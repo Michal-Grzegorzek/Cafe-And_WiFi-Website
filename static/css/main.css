@@ -7,6 +7,18 @@ body, html {
     height: 100%;
 }
 
+h1 {
+    font-family: 'Lora', serif;
+    font-size: 40px !important;
+}
+
+h2 {
+    font-family: 'Overpass', sans-serif;
+    font-size: 18px !important;
+
+
+}
+
 
 /* Footer */
 
@@ -14,17 +26,13 @@ body, html {
      text-align: center;
      margin-top: 20px;
      margin-bottom: 30px;
-     font-size: 14px
+     font-size: 14px;
   }
 
 .nav-foot{
-    background-color: #E5D9B6;
+    background-color: white; /*#E5D9B6*/
 }
 
-.foot-padding{
-   padding-top:3%;
-
-}
 
 .primary-color{
     color: #292b2c;
@@ -40,26 +48,15 @@ body, html {
 /* Nav Bar */
 .font-brand{
     font-family: 'Lora', serif;
-    font-size: 35px;
+    font-size: 35px !important;
 }
 
 .font-nav-items{
     font-family: 'Overpass', sans-serif;
-    font-size: 18px;
+    font-size: 18px !important;
 }
 
 /* ***** */
-
-
-.d{
-    font-family: 'Lora', serif;
-    font-size: 40px;
-}
-
-.f{
-    font-family: 'Overpass', sans-serif;
-    font-size: 18px;
-}
 
 
 /* The hero image */
@@ -118,3 +115,59 @@ body, html {
     padding-right: 2%;
 }
 /* ***** */
+
+/* Login image */
+.log-reg-image {
+  /* Use "linear-gradient" to add a darken background effect to the image (photographer.jpg). This will make the text easier to read */
+    background-image: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.6)), url("https://printdream.pl/wp-content/uploads/TK_45_L.jpg");
+
+  /* Set a specific height */
+    height: 89%;
+
+  /* Position and center the image to scale nicely on all screens */
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
+    position: relative;
+}
+
+/* Place text in the middle of the image */
+.log-reg-text {
+    /*position: absolute;*/
+    color: white;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+
+}
+
+.log-reg-text h1, h2 {
+    text-align: center;
+}
+.drr {
+    /*pbox-shadow: 0 15px 25px rgba(129, 124, 124, 0.0);*/
+    background-color: rgba(0, 0, 0, 0.3);
+
+}
+/* ***** */
+
+
+.add-image {
+  /* Use "linear-gradient" to add a darken background effect to the image (photographer.jpg). This will make the text easier to read */
+    background-image: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.6)), url("https://caffedelmondo.pl/blog/wp-content/uploads/2021/09/1-16-scaled.jpg");
+
+  /* Set a specific height */
+    height: 100%;
+
+  /* Position and center the image to scale nicely on all screens */
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
+    position: relative;
+}
+
+
+.dupa{
+text-align: center;
+}
+

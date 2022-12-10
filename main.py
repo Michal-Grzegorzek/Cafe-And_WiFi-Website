@@ -8,10 +8,13 @@ from datetime import date
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy.orm import relationship
+from sqlalchemy.dialects.mysql import FLOAT
+from sqlalchemy.sql import functions
 from flask_login import UserMixin, login_user, LoginManager, login_required, current_user, logout_user
 from flask_gravatar import Gravatar
 import os
-from forms import Cafe, RegisterForm, LoginForm
+from forms import Cafe, RegisterForm, LoginForm, RateForm
+
 
 
 app = Flask(__name__)
@@ -61,6 +64,7 @@ class AllCafes(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     author_id = db.Column(db.Integer, db.ForeignKey('users.id'))
     author = relationship("User", back_populates="cafes")
+    id_cafe = relationship("Reviews", back_populates="caffe_review")
     name = db.Column(db.String(250), unique=True, nullable=True)
     map_url = db.Column(db.String(500), nullable=True)
     img_url = db.Column(db.String(500), nullable=True)
@@ -71,6 +75,17 @@ class AllCafes(db.Model):
     has_sockets = db.Column(db.Boolean, nullable=True)
     can_take_calls = db.Column(db.Boolean, nullable=True)
     coffee_price = db.Column(db.String(250), nullable=True)
+
+
+class Reviews(db.Model):
+    __tablename__ = "all_reviews"
+    id = db.Column(db.Integer, primary_key=True)
+    cafe_id = db.Column(db.Integer, db.ForeignKey('all_cafes.id'))
+    caffe_review = relationship("AllCafes", back_populates="id_cafe")
+
+    avg_review = db.Column(FLOAT(unsigned=True))
+    number_of_ratings = db.Column(db.Integer)
+    sum_of_ratings = db.Column(db.Integer)
 
 
 # db.create_all()
@@ -166,6 +181,39 @@ def add_new_cafe():
         db.session.commit()
         return redirect(url_for("home"))
     return render_template("add-cafe.html", form=form, logged_in=current_user.is_authenticated, title="Add Cafe")
+
+
+@app.route("/review/<int:cafe_id>", methods=["POST", "GET"])
+def review(cafe_id):
+    form = RateForm()
+    requested_cafe = AllCafes.query.get(cafe_id)
+    # sum = Reviews.query.get(sum_of_ratings)
+
+
+    bob = Reviews.query.filter_by(cafe_id=cafe_id).all()
+
+    suma = 0
+    for i in bob:
+        suma+=i.sum_of_ratings
+
+    print(suma)
+    if form.validate_on_submit():
+        if not current_user.is_authenticated:
+            flash("You need to login or register to add review.")
+            return redirect(url_for("login"))
+        new_review = Reviews(
+            cafe_id=cafe_id,
+            number_of_ratings=8 ,
+            sum_of_ratings=3
+        )
+        # bob = Reviews.query.get(cafe_id)
+        # bob.number_of_ratings = 8
+
+        db.session.add(new_review)
+        db.session.commit()
+        return redirect(url_for("home"))
+    return render_template("review.html", title="Add Review", logged_in=current_user.is_authenticated,
+                           cafes=requested_cafe, form=form)
 
 
 if __name__ == "__main__":

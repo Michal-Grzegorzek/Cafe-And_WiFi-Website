@@ -1,6 +1,6 @@
 from flask_wtf import FlaskForm
 from wtforms import StringField, SubmitField, PasswordField, BooleanField, IntegerField, DecimalRangeField, FloatField
-from wtforms.validators import DataRequired, URL, NumberRange
+from wtforms.validators import DataRequired, URL, NumberRange, Email, EqualTo, Length
 from flask_ckeditor import CKEditorField
 
 
@@ -21,14 +21,19 @@ class Cafe(FlaskForm):
 
 
 class RegisterForm(FlaskForm):
-    email = StringField("Email",  validators=[DataRequired()])
-    password = PasswordField('Password', validators=[DataRequired()])
-    name = StringField('Name', validators=[DataRequired()])
+    email = StringField("Email",  validators=[DataRequired(), Email()])
+    password = PasswordField('Password', validators=[DataRequired(), Length(min=6, max=16)])
+    confirm_password = PasswordField('Confirm Password', validators=[DataRequired(), EqualTo('password')])
+    name = StringField('Name', validators=[DataRequired(), Length(min=3, max=20)])
     submit = SubmitField('Sign Me Up!')
 
 
 class LoginForm(FlaskForm):
-    email = StringField("Email",  validators=[DataRequired()])
+    email = StringField("Email",  validators=[DataRequired(), Email()])
     password = PasswordField('Password', validators=[DataRequired()])
     submit = SubmitField('Let Me In!')
 
+
+class RateForm(FlaskForm):
+    rate = IntegerField('Rate', validators=[DataRequired(), NumberRange(min=0, max=10)])
+    submit = SubmitField('Add Rate!')
