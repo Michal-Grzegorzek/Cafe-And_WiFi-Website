@@ -57,6 +57,7 @@ class User(UserMixin, db.Model):
     name = db.Column(db.String(1000))
 
     cafes = relationship("AllCafes", back_populates="author")
+    rev_cafe = relationship("Reviews", back_populates="author")
 
 
 class AllCafes(db.Model):
@@ -75,6 +76,7 @@ class AllCafes(db.Model):
     has_sockets = db.Column(db.Boolean, nullable=True)
     can_take_calls = db.Column(db.Boolean, nullable=True)
     coffee_price = db.Column(db.String(250), nullable=True)
+    avg_review = db.Column(FLOAT(unsigned=True))
 
 
 class Reviews(db.Model):
@@ -83,9 +85,9 @@ class Reviews(db.Model):
     cafe_id = db.Column(db.Integer, db.ForeignKey('all_cafes.id'))
     caffe_review = relationship("AllCafes", back_populates="id_cafe")
 
-    avg_review = db.Column(FLOAT(unsigned=True))
-    number_of_ratings = db.Column(db.Integer)
-    sum_of_ratings = db.Column(db.Integer)
+    author_id = db.Column(db.Integer, db.ForeignKey('users.id'))
+    author = relationship("User", back_populates="rev_cafe")
+    rate = db.Column(db.Integer)
 
 
 # db.create_all()
@@ -94,12 +96,15 @@ class Reviews(db.Model):
 @app.route('/home')
 def home():
     cafes = AllCafes.query.all()
-    return render_template("index.html", all_cafes=cafes, logged_in=current_user.is_authenticated, title="Home Page")
+    reviews = Reviews.query.all()
+    condition = request.args.get('condition')
+
+    return render_template("index.html", condition=condition, all_cafes=cafes, all_reviews=reviews, logged_in=current_user.is_authenticated, title="Home Page")
 
 
-@app.route('/contact')
-def contact():
-    return render_template("contact.html", logged_in=current_user.is_authenticated, title="Contact Page")
+@app.route('/cafes-added-by-you')
+def cafes_added_by_you():
+    return render_template("cafes-added-by-you.html", logged_in=current_user.is_authenticated, title="Added By You")
 
 
 @app.route('/register', methods=["POST", "GET"])
@@ -153,15 +158,14 @@ def logout():
     logout_user()
     return redirect(url_for('home'))
 
+
 @app.route("/add-cafe", methods=["POST", "GET"])
 def add_new_cafe():
     if not current_user.is_authenticated:
         flash("You need to login or register to adding new cafe.")
         return redirect(url_for("login"))
     form = Cafe()
-    print("1")
     if form.validate_on_submit():
-        print("3")
         new_cafe = AllCafes(
             name=form.name.data,
             author_id=current_user.id,
@@ -174,12 +178,12 @@ def add_new_cafe():
             has_sockets=form.has_sockets.data,
             can_take_calls=form.can_take_calls.data,
             coffee_price=form.coffee_price.data,
-            # date=date.today().strftime("%B %d, %Y")
         )
 
         db.session.add(new_cafe)
         db.session.commit()
-        return redirect(url_for("home"))
+        conditionn = "true"
+        return redirect(url_for("home", condition=conditionn))
     return render_template("add-cafe.html", form=form, logged_in=current_user.is_authenticated, title="Add Cafe")
 
 
@@ -187,31 +191,38 @@ def add_new_cafe():
 def review(cafe_id):
     form = RateForm()
     requested_cafe = AllCafes.query.get(cafe_id)
-    # sum = Reviews.query.get(sum_of_ratings)
+    requested_review = Reviews.query.get(cafe_id)
 
+    rev_list_to_check = Reviews.query.filter_by(cafe_id=cafe_id).all()
 
-    bob = Reviews.query.filter_by(cafe_id=cafe_id).all()
-
-    suma = 0
-    for i in bob:
-        suma+=i.sum_of_ratings
-
-    print(suma)
     if form.validate_on_submit():
         if not current_user.is_authenticated:
             flash("You need to login or register to add review.")
             return redirect(url_for("login"))
+
+        for i in rev_list_to_check:
+            if i.author_id == current_user.id:
+                return redirect(url_for("logout"))
+
         new_review = Reviews(
             cafe_id=cafe_id,
-            number_of_ratings=8 ,
-            sum_of_ratings=3
+            author_id=current_user.id,
+            rate=form.rate.data
         )
-        # bob = Reviews.query.get(cafe_id)
-        # bob.number_of_ratings = 8
 
         db.session.add(new_review)
+
+        list_reviews = Reviews.query.filter_by(cafe_id=cafe_id).all()
+        count_reviews = 0
+        sum_reviews = 0
+
+        for i in list_reviews:
+            sum_reviews += i.rate
+            count_reviews += 1
+        requested_cafe.avg_review = round((sum_reviews/count_reviews), 1)
         db.session.commit()
-        return redirect(url_for("home"))
+        conditionn = "true"
+        return redirect(url_for("home", condition=conditionn))
     return render_template("review.html", title="Add Review", logged_in=current_user.is_authenticated,
                            cafes=requested_cafe, form=form)
 

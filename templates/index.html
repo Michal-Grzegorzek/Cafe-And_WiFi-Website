@@ -42,10 +42,27 @@
           </div>
           <div class="col-lg-6 d-flex align-items-center justify-content-center row">
             <div class="rating">
-              <label>Rating: 4.0</label>
+              <label>Rating: {{cafes.avg_review}}</label>
               <i class="fas fa-star star"></i>
             </div>
+              {% set ftotal= {'total': 0} %}
+              {% for i in all_reviews %}
+              {% if cafes.id == i.cafe_id %}
+              {% if current_user.id == i.author.id %}
+              {% if ftotal.update({'total': ftotal.total + 1}) %}{% endif %}
+
+              {% endif %}
+              {% endif %}
+              {% endfor %}
+
+
+            {% if ftotal.total == 1 %}
+            <a href="{{ url_for('review', cafe_id=cafes.id) }}" class="btn btn-dark disabled">Rating added!</a>
+            {% else %}
             <a href="{{ url_for('review', cafe_id=cafes.id) }}" class="btn btn-dark">Add Review</a>
+            {% endif %}
+
+
             <h6 class="card-subtitle text-muted mb-1" style="padding-top: 10px"> Added by {{cafes.author.name}} </h6>
           </div>
         </div>
@@ -73,9 +90,42 @@
   {% endfor %}
 
 </div>
+
+
+    <button onclick="showModal()">Wyświetl modal</button>
+
+<!-- The Modal -->
+<div id="myModal" class="modal">
+  <!-- Modal content -->
+  <div class="modal-content">
+    <h2>Action completed successfully!</h2>
+  </div>
+</div>
+
 <hr>
+
 </section>
 
+<script>
+var condition = {{condition}};
+if (condition) {
+  showModal();
+  condition = false;
+}
+
+function showModal() {
+  // Get the modal
+  var modal = document.getElementById("myModal");
+
+  // Show the modal
+  modal.style.display = "block";
+
+  // Hide the modal after 2 seconds
+  setTimeout(function() {
+    modal.style.display = "none";
+  }, 2000);
+}
+</script>
 
 {% endblock content %}
 
