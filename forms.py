@@ -1,7 +1,18 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, SubmitField, PasswordField, BooleanField, IntegerField, DecimalRangeField, FloatField
+from wtforms import StringField, SubmitField, PasswordField, BooleanField, IntegerField, DecimalRangeField, FloatField, DecimalField
 from wtforms.validators import DataRequired, URL, NumberRange, Email, EqualTo, Length
 from flask_ckeditor import CKEditorField
+
+
+class MyFloatField(FloatField):
+    def process_formdata(self, valuelist):
+        if valuelist:
+            try:
+                self.data = float(valuelist[0].replace(',', '.'))
+                self.data = round(self.data, 2)
+            except ValueError:
+                self.data = None
+                raise ValueError(self.gettext('Not a valid float value'))
 
 
 # #WTForm
@@ -11,13 +22,17 @@ class Cafe(FlaskForm):
     map_url = StringField("Google Maps URL", validators=[DataRequired(), URL()])
     img_url = StringField("Cafe Image URL", validators=[DataRequired(), URL()])
     location = StringField("Cafe Location", validators=[DataRequired()])
-    coffee_price = FloatField("Cafe Price in €", validators=[DataRequired(), NumberRange(min=0)])
+    # coffee_price = FloatField("Cafe Price in €", validators=[DataRequired(), NumberRange(min=0)])
+    coffee_price = MyFloatField("Cafe Price in €", validators=[DataRequired(), NumberRange(min=0)])
     seats = IntegerField('How Many Seats?', validators=[DataRequired(), NumberRange(min=0)])
     has_toilet = BooleanField("Toilets Available?")
     has_wifi = BooleanField("WiFi Available?")
     has_sockets = BooleanField("Sockets Available?")
     can_take_calls = BooleanField("Call taking Available?")
     submit = SubmitField("Add Cafe")
+
+
+
 
 
 class RegisterForm(FlaskForm):

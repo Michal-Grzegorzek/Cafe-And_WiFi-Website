@@ -104,7 +104,13 @@ def home():
 
 @app.route('/cafes-added-by-you')
 def cafes_added_by_you():
-    return render_template("cafes-added-by-you.html", logged_in=current_user.is_authenticated, title="Added By You")
+    if not current_user.is_authenticated:
+        flash("You need to login or register to use this tab.")
+        return redirect(url_for("login"))
+
+    cafes = AllCafes.query.all()
+    reviews = Reviews.query.all()
+    return render_template("cafes-added-by-you.html", all_cafes=cafes, all_reviews=reviews, logged_in=current_user.is_authenticated, title="Added By You")
 
 
 @app.route('/register', methods=["POST", "GET"])
@@ -226,6 +232,18 @@ def review(cafe_id):
     return render_template("review.html", title="Add Review", logged_in=current_user.is_authenticated,
                            cafes=requested_cafe, form=form)
 
+
+@app.route("/delete-cafe/<int:cafe_id>", methods=["POST", "GET"])
+def delete_cafe(cafe_id):
+    if not current_user.is_authenticated:
+        flash("You need to login or register to delete a cafe.")
+        return redirect(url_for("login"))
+
+    cafe_to_delete = AllCafes.query.get(cafe_id)
+    db.session.delete(cafe_to_delete)
+    db.session.commit()
+
+    return redirect(url_for("cafes_added_by_you"))
 
 if __name__ == "__main__":
     app.run(debug=True)
