@@ -20,7 +20,7 @@ from forms import Cafe, RegisterForm, LoginForm, RateForm
 app = Flask(__name__)
 app.app_context().push()
 app.config['SECRET_KEY'] = 'any secret string'
-app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY')
+# app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY')
 ckeditor = CKEditor(app)
 Bootstrap(app)
 login_manager = LoginManager()
