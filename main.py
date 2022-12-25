@@ -1,4 +1,5 @@
 import werkzeug
+import psycopg2
 from functools import wraps
 from flask import g, request, redirect, url_for
 from flask import Flask, render_template, redirect, url_for, flash, request, abort
@@ -28,7 +29,8 @@ login_manager.init_app(app)
 
 
 # CONNECT TO DB
-app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get("DATABASE_URL",  "sqlite:///cafes.db")
+# app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get("DATABASE_URL",  "sqlite:///cafes.db")
+app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://cafes_user:fp5mEfS0z93F6pmD75FQ7X415h88WIV1@localhost:5432/cafes'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db = SQLAlchemy(app)
 
