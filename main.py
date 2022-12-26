@@ -91,7 +91,7 @@ class Reviews(db.Model):
     rate = db.Column(db.Integer)
 
 
-db.create_all()
+# db.create_all()
 
 @app.route('/')
 @app.route('/home')
