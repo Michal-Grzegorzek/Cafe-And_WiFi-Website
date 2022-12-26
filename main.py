@@ -20,8 +20,8 @@ from forms import Cafe, RegisterForm, LoginForm, RateForm
 
 app = Flask(__name__)
 app.app_context().push()
-app.config['SECRET_KEY'] = 'any secret string'
-# app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY')
+# app.config['SECRET_KEY'] = 'any secret string'
+app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY')
 ckeditor = CKEditor(app)
 Bootstrap(app)
 login_manager = LoginManager()
@@ -29,8 +29,7 @@ login_manager.init_app(app)
 
 
 # CONNECT TO DB
-# app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get("DATABASE_URL",  "sqlite:///cafes.db")
-app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://cafes_user:fp5mEfS0z93F6pmD75FQ7X415h88WIV1@localhost:5432/cafes'
+app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get("DATABASE_URL", "sqlite:///cafes.db")
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db = SQLAlchemy(app)
 
