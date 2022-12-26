@@ -79,17 +79,22 @@ class Reviews(db.Model):
 
 # db.create_all()
 
+##USERS FUNCTIONS
+def admin_only(function):
+    @wraps(function)
+    def decorating(*args, **kwargs):
+        if current_user.is_anonymous:
+            return abort(403)
+        elif current_user.id != 1:
+            return abort(403)
+        else:
+            return function(*args, **kwargs)
+    return decorating
+
+
 @login_manager.user_loader
 def load_user(user_id):
-    return User.query.get(user_id)
-
-def admin_only(f):
-    @wraps(f)
-    def decorated_function(*args, **kwargs):
-        if not current_user.is_authenticated or current_user.id != 1:
-            return abort(403)
-        return f(*args, **kwargs)
-    return decorated_function
+    return User.query.get(int(user_id))
 
 
 @app.route('/')
@@ -99,7 +104,8 @@ def home():
     reviews = Reviews.query.all()
     condition = request.args.get('condition')
 
-    return render_template("index.html", condition=condition, all_cafes=cafes, all_reviews=reviews, logged_in=current_user.is_authenticated, title="Home Page")
+    return render_template("index.html", condition=condition, all_cafes=cafes, all_reviews=reviews,
+                           logged_in=current_user.is_authenticated, title="Home Page")
 
 
 @app.route('/cafes-added-by-you')
@@ -110,7 +116,8 @@ def cafes_added_by_you():
 
     cafes = AllCafes.query.all()
     reviews = Reviews.query.all()
-    return render_template("cafes-added-by-you.html", all_cafes=cafes, all_reviews=reviews, logged_in=current_user.is_authenticated, title="Added By You")
+    return render_template("cafes-added-by-you.html", all_cafes=cafes, all_reviews=reviews,
+                           logged_in=current_user.is_authenticated, title="Added By You")
 
 
 @app.route('/register', methods=["POST", "GET"])
@@ -150,7 +157,6 @@ def login():
             return redirect(url_for('login'))
         if werkzeug.security.check_password_hash(user.password, password):
             login_user(user)
-            print("zalogowano")
             return redirect(url_for("home"))
         else:
             flash("Password incorrect, try again.")
@@ -246,4 +252,4 @@ def delete_cafe(cafe_id):
     return redirect(url_for("cafes_added_by_you"))
 
 if __name__ == "__main__":
-    app.run(debug=True)
+    app.run()
