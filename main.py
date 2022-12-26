@@ -29,7 +29,7 @@ login_manager.init_app(app)
 
 
 # CONNECT TO DB
-app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get("DATABASE_", "sqlite:///cafes.db")
+app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get("DATABASE_URL", "sqlite:///cafes.db")
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db = SQLAlchemy(app)
 
@@ -91,7 +91,7 @@ class Reviews(db.Model):
     rate = db.Column(db.Integer)
 
 
-# db.create_all()
+db.create_all()
 
 @app.route('/')
 @app.route('/home')
