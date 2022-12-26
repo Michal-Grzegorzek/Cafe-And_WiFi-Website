@@ -18,14 +18,15 @@ from forms import Cafe, RegisterForm, LoginForm, RateForm
 
 
 
+
 app = Flask(__name__)
 app.app_context().push()
 # app.config['SECRET_KEY'] = 'any secret string'
 app.config['SECRET_KEY'] = os.getenv('SECRET_KEY')
 ckeditor = CKEditor(app)
 Bootstrap(app)
-login_manager = LoginManager()
-login_manager.init_app(app)
+login = LoginManager(app)
+login.init_app(app)
 
 
 # CONNECT TO DB
@@ -92,7 +93,7 @@ def admin_only(function):
     return decorating
 
 
-@login_manager.user_loader
+@login.user_loader
 def load_user(user_id):
     return User.query.get(int(user_id))
 
@@ -104,8 +105,7 @@ def home():
     reviews = Reviews.query.all()
     condition = request.args.get('condition')
 
-    return render_template("index.html", condition=condition, all_cafes=cafes, all_reviews=reviews,
-                           logged_in=current_user.is_authenticated, title="Home Page")
+    return render_template("index.html", condition=condition, all_cafes=cafes, all_reviews=reviews, title="Home Page")
 
 
 @app.route('/cafes-added-by-you')
@@ -116,8 +116,7 @@ def cafes_added_by_you():
 
     cafes = AllCafes.query.all()
     reviews = Reviews.query.all()
-    return render_template("cafes-added-by-you.html", all_cafes=cafes, all_reviews=reviews,
-                           logged_in=current_user.is_authenticated, title="Added By You")
+    return render_template("cafes-added-by-you.html", all_cafes=cafes, all_reviews=reviews, title="Added By You")
 
 
 @app.route('/register', methods=["POST", "GET"])
@@ -141,11 +140,13 @@ def register():
         login_user(new_user)
         return redirect(url_for("home"))
 
-    return render_template("register.html", form=form, logged_in=current_user.is_authenticated, title="Register Page")
+    return render_template("register.html", form=form, title="Register Page")
 
 
 @app.route('/login', methods=["POST", "GET"])
 def login():
+    if current_user.is_authenticated:
+        return redirect(url_for('home'))
     form = LoginForm()
     if request.method == "POST":
         email = form.email.data
@@ -162,7 +163,7 @@ def login():
             flash("Password incorrect, try again.")
             return redirect(url_for('login'))
 
-    return render_template("login.html", form=form, logged_in=current_user.is_authenticated, title="Login Page")
+    return render_template("login.html", form=form, title="Login Page")
 
 
 @app.route('/logout')
@@ -196,7 +197,7 @@ def add_new_cafe():
         db.session.commit()
         conditionn = "true"
         return redirect(url_for("home", condition=conditionn))
-    return render_template("add-cafe.html", form=form, logged_in=current_user.is_authenticated, title="Add Cafe")
+    return render_template("add-cafe.html", form=form, title="Add Cafe")
 
 
 @app.route("/review/<int:cafe_id>", methods=["POST", "GET"])
@@ -235,7 +236,7 @@ def review(cafe_id):
         db.session.commit()
         conditionn = "true"
         return redirect(url_for("home", condition=conditionn))
-    return render_template("review.html", title="Add Review", logged_in=current_user.is_authenticated,
+    return render_template("review.html", title="Add Review",
                            cafes=requested_cafe, form=form)
 
 
