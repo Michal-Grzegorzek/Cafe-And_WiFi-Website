@@ -49,7 +49,7 @@
                 Home
               </a>
               <!--              <a class="nav-link active" aria-current="page" href="#">Home</a>-->
-              {% if not logged_in: %}
+              {% if not current_user.is_authenticated: %}
             </li>
             <li class="nav-item">
               <a class="nav-link font-nav-items" href="{{url_for('login')}}">
