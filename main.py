@@ -30,8 +30,9 @@ Session(app)
 
 ckeditor = CKEditor(app)
 Bootstrap(app)
-login = LoginManager(app)
-login.init_app(app)
+login_manager = LoginManager(app)
+login_manager.init_app(app)
+login_manager.session_protection = "strong"
 
 
 # CONNECT TO DB
@@ -98,7 +99,7 @@ def admin_only(function):
     return decorating
 
 
-@login.user_loader
+@login_manager.user_loader
 def load_user(user_id):
     return User.query.get(int(user_id))
 
