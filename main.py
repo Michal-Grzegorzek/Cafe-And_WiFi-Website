@@ -2,7 +2,8 @@ import werkzeug
 import psycopg2
 from functools import wraps
 from flask import g, request, redirect, url_for
-from flask import Flask, render_template, redirect, url_for, flash, request, abort
+from flask import Flask, render_template, redirect, url_for, flash, request, abort, session
+from flask_session import Session
 from flask_bootstrap import Bootstrap
 from flask_ckeditor import CKEditor
 from datetime import date
@@ -23,6 +24,10 @@ app = Flask(__name__)
 app.app_context().push()
 # app.config['SECRET_KEY'] = 'any secret string'
 app.config['SECRET_KEY'] = os.getenv('SECRET_KEY')
+app.config["SESSION_PERMANENT"] = False
+app.config["SESSION_TYPE"] = "filesystem"
+Session(app)
+
 ckeditor = CKEditor(app)
 Bootstrap(app)
 login = LoginManager(app)
@@ -158,6 +163,7 @@ def login():
             return redirect(url_for('login'))
         if werkzeug.security.check_password_hash(user.password, password):
             login_user(user)
+            session["name"] = request.form.get("name")
             return redirect(url_for("home"))
         else:
             flash("Password incorrect, try again.")
@@ -169,6 +175,7 @@ def login():
 @app.route('/logout')
 def logout():
     logout_user()
+    session["name"] = None
     return redirect(url_for('home'))
 
 
@@ -253,4 +260,4 @@ def delete_cafe(cafe_id):
     return redirect(url_for("cafes_added_by_you"))
 
 if __name__ == "__main__":
-    app.run()
+    app.run(debug=True)
