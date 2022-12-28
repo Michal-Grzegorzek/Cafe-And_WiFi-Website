@@ -2,7 +2,7 @@ import werkzeug
 import psycopg2
 from functools import wraps
 from flask import g, request, redirect, url_for
-from flask import Flask, render_template, redirect, url_for, flash, request, abort, session
+from flask import Flask, render_template, redirect, url_for, flash, request, abort
 from flask_session import Session
 from flask_bootstrap import Bootstrap
 from flask_ckeditor import CKEditor
@@ -24,22 +24,16 @@ app = Flask(__name__)
 app.app_context().push()
 # app.config['SECRET_KEY'] = 'any secret string'
 app.config['SECRET_KEY'] = os.getenv('SECRET_KEY')
-app.config["SESSION_PERMANENT"] = False
-app.config["SESSION_TYPE"] = "filesystem"
-Session(app)
 
-ckeditor = CKEditor(app)
 Bootstrap(app)
-login_manager = LoginManager(app)
-login_manager.init_app(app)
-login_manager.session_protection = "strong"
 
 
 # CONNECT TO DB
 app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get("DATABASE_URL", "sqlite:///cafes.db")
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+login_manager = LoginManager(app)
 db = SQLAlchemy(app)
-
+login_manager.login_view = 'login'
 
 # CONFIGURE TABLES
 
@@ -87,16 +81,16 @@ class Reviews(db.Model):
 # db.create_all()
 
 ##USERS FUNCTIONS
-def admin_only(function):
-    @wraps(function)
-    def decorating(*args, **kwargs):
-        if current_user.is_anonymous:
-            return abort(403)
-        elif current_user.id != 1:
-            return abort(403)
-        else:
-            return function(*args, **kwargs)
-    return decorating
+# def admin_only(function):
+#     @wraps(function)
+#     def decorating(*args, **kwargs):
+#         if current_user.is_anonymous:
+#             return abort(403)
+#         elif current_user.id != 1:
+#             return abort(403)
+#         else:
+#             return function(*args, **kwargs)
+#     return decorating
 
 
 @login_manager.user_loader
@@ -114,6 +108,7 @@ def home():
     return render_template("index.html", condition=condition, all_cafes=cafes, all_reviews=reviews, title="Home Page")
 
 
+@login_required
 @app.route('/cafes-added-by-you')
 def cafes_added_by_you():
     if not current_user.is_authenticated:
@@ -164,7 +159,6 @@ def login():
             return redirect(url_for('login'))
         if werkzeug.security.check_password_hash(user.password, password):
             login_user(user)
-            session["name"] = request.form.get("name")
             return redirect(url_for("home"))
         else:
             flash("Password incorrect, try again.")
