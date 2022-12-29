@@ -29,7 +29,7 @@ Bootstrap(app)
 
 
 # CONNECT TO DB
-app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get("DATABASE_URL", "sqlite:///cafes.db")
+app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get("DATABASE", "sqlite:///cafes.db")
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 login_manager = LoginManager(app)
 db = SQLAlchemy(app)
@@ -170,7 +170,6 @@ def login():
 @app.route('/logout')
 def logout():
     logout_user()
-    session["name"] = None
     return redirect(url_for('home'))
 
 
