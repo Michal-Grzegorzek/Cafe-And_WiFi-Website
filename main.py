@@ -24,18 +24,23 @@ app = Flask(__name__)
 app.app_context().push()
 # app.config['SECRET_KEY'] = 'any secret string'
 app.config['SECRET_KEY'] = os.getenv('SECRET_KEY')
-
+login_manager = LoginManager(app)
+login_manager.init_app(app)
 Bootstrap(app)
 
 
 # CONNECT TO DB
 app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get("DATABASE", "sqlite:///cafes.db")
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-login_manager = LoginManager(app)
 db = SQLAlchemy(app)
-login_manager.login_view = 'login'
 
 # CONFIGURE TABLES
+
+
+
+@login_manager.user_loader
+def load_user(user_id):
+    return User.query.get(int(user_id))
 
 class User(UserMixin, db.Model):
     __tablename__ = "users"
@@ -93,9 +98,6 @@ class Reviews(db.Model):
 #     return decorating
 
 
-@login_manager.user_loader
-def load_user(user_id):
-    return User.query.get(int(user_id))
 
 
 @app.route('/')
