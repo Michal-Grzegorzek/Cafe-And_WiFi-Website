@@ -32,9 +32,6 @@ class Cafe(FlaskForm):
     submit = SubmitField("Add Cafe")
 
 
-
-
-
 class RegisterForm(FlaskForm):
     email = StringField("Email",  validators=[DataRequired(), Email()])
     password = PasswordField('Password', validators=[DataRequired(), Length(min=6, max=16)])
